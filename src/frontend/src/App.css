@@ -1,0 +1,40 @@
+.App {
+  display: flex;
+  height: 100vh;
+}
+
+.ChatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.MapContainer {
+  flex: 1;
+}
+
+.ChatContainer > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ChatContainer > div > div {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ChatContainer > div > textarea,
+.ChatContainer > div > select,
+.ChatContainer > div > button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.ChatContainer > div > textarea {
+  height: 100px;
+}
+
+.ChatContainer > div > button {
+  margin-top: 10px;
+}
