@@ -2,4 +2,7 @@ openai
 pymongo
 python-dotenv
 fastapi
-uvicorn
+uvicorn #uvicorn main:app --reload
+langchain
+langchain-openai
+langchain-community

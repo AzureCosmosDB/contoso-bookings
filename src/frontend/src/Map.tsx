@@ -3,6 +3,9 @@ import * as atlas from 'azure-maps-control';
 import * as spatial from "azure-maps-spatial-io";
 import "azure-maps-control/dist/atlas.min.css";
 
+require('dotenv').config();
+const azureMapsKey = process.env.REACT_APP_CONTOSO_BOOKINGS_AZURE_MAPS_KEY;
+
 interface MapProps {
   coordinates: { lat: number; lng: number }[];
 }
@@ -18,7 +21,7 @@ const Map: React.FC<MapProps> = ({ coordinates }) => {
         view: 'Auto',
         authOptions: {
           authType: atlas.AuthenticationType.subscriptionKey,
-          subscriptionKey: process.env.REACT_APP_CONTOSO_BOOKINGS_AZURE_MAPS_KEY as string,
+          subscriptionKey: azureMapsKey as string,
         },
       });
 
