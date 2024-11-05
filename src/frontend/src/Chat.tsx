@@ -1,24 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import UserMessage from './UserMessage';
+import UserMessageComp from './UserMessage';
+import ReplyMessageComp from './ReplyMessage';
+import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
-import { log } from 'util';
 
-type UserMessageProps = {
-  id: string;
-  message: string;
-  amenity: string;
-  timestamp: Date;
-};
-
-interface ChatProps {
-  amenities: string[];
-}
 
 const Chat = () => {
   const [message, setMessage] = useState('');
   const [amenities, setAmenities] = useState<string[]>([]);
   const [selectedAmenity, setSelectedAmenity] = useState<string>('');
-  const [messages, setMessages] = useState<UserMessageProps[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -37,6 +28,17 @@ const Chat = () => {
   }, []);
 
   const handleSendMessage = async () => {
+
+    const newMessage: UserMessage = {
+      id: uuidv4(),
+      message,
+      amenity: selectedAmenity,
+      timestamp: new Date(),
+    };
+
+    setMessages([...messages, newMessage]);
+
+
     try {
       const response = await fetch('http://localhost:8000/query-message', {
         method: 'POST',
@@ -48,7 +50,6 @@ const Chat = () => {
       });
 
 
-      console.log(JSON.stringify({ content: message, amenity: selectedAmenity }));
       
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -58,6 +59,18 @@ const Chat = () => {
       console.log('Message sent:', data);
       // Clear the message input after sending
       setMessage('');
+
+      const replyMessages: ReplyMessage[] = data.map((reply: any) => ({
+        id: uuidv4(),
+        description: reply.description,
+        price: reply.price,
+        timestamp: new Date(),
+        replyTo: newMessage.id,
+      }));
+      setMessages((prevMessages) => [...prevMessages, ...replyMessages]);
+    
+      setMessage('');
+
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -67,9 +80,13 @@ return (
   <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
     <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
       <h2>Chat</h2>
-      {messages.map((msg) => (
-        <UserMessage key={msg.id} message={msg} />
-      ))}
+      {messages.map((msg) =>
+          'amenity' in msg ? (
+            <UserMessageComp message={msg as UserMessage}/>
+          ) : (
+            <ReplyMessageComp replies={[msg as ReplyMessage]} />
+          )
+        )}
     </div>
     <div style={{ padding: '10px', borderTop: '1px solid #ccc' }}>
       <textarea

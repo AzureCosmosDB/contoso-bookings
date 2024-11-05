@@ -1,13 +1,7 @@
 // UserMessage.tsx
 import React from 'react';
 import './UserMessage.css';
-
-type UserMessageProps = {
-  id: string;
-  message: string;
-  amenity: string;
-  timestamp: Date;
-};
+import type { UserMessage as UserMessageProps } from './ChatMessage';
 
 const UserMessage: React.FC<{ message: UserMessageProps }> = ({ message }) => {
   return (

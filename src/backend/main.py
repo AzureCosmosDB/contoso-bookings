@@ -98,5 +98,6 @@ def search_listings(query, amenity):
             ]
     # Execute the aggregation
     results = collection.aggregate(pipeline)
-    return list(results)
+    results = list(results)
+    return results
     
