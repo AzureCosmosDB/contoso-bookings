@@ -1,6 +1,5 @@
 openai
 pymongo
 python-dotenv
-flask
-azure-keyvault-secrets
-azure-identity
+fastapi
+uvicorn
