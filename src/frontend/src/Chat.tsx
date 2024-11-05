@@ -4,8 +4,11 @@ import ReplyMessageComp from './ReplyMessage';
 import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
 
+interface ChatProps {
+  setCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
+}
 
-const Chat = () => {
+const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
   const [message, setMessage] = useState('');
   const [amenities, setAmenities] = useState<string[]>([]);
   const [selectedAmenity, setSelectedAmenity] = useState<string>('');
@@ -49,7 +52,6 @@ const Chat = () => {
         body: JSON.stringify({ content: message, amenity: selectedAmenity }),
       });
 
-
       
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -60,6 +62,12 @@ const Chat = () => {
       // Clear the message input after sending
       setMessage('');
 
+      const coordinates = data.map((reply: any) => ({
+        lat: reply.location.coordinates[1],
+        lng: reply.location.coordinates[0],
+      }));
+
+
       const replyMessages: ReplyMessage[] = data.map((reply: any) => ({
         id: uuidv4(),
         description: reply.description,
@@ -68,7 +76,7 @@ const Chat = () => {
         replyTo: newMessage.id,
       }));
       setMessages((prevMessages) => [...prevMessages, ...replyMessages]);
-    
+      setCoordinates(coordinates);
       setMessage('');
 
     } catch (error) {
