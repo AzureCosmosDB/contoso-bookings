@@ -3,7 +3,6 @@ import * as atlas from 'azure-maps-control';
 import * as spatial from "azure-maps-spatial-io";
 import "azure-maps-control/dist/atlas.min.css";
 
-require('dotenv').config();
 const azureMapsKey = process.env.REACT_APP_CONTOSO_BOOKINGS_AZURE_MAPS_KEY;
 
 interface MapProps {

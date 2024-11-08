@@ -3,6 +3,7 @@ import UserMessageComp from './UserMessage';
 import ReplyMessageComp from './ReplyMessage';
 import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
+import { log } from 'console';
 
 interface ChatProps {
   setCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
@@ -18,9 +19,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
     const fetchAmenities = async () => {
       try {
         const response = await fetch('http://localhost:8000/amenities');
-        const data = await response.json();
-        console.log('Amenities:', data.amenities);
-        
+        const data = await response.json();        
         setAmenities(data.amenities);
       } catch (error) {
         console.error('Error fetching amenities:', error);
@@ -58,25 +57,25 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
       }
 
       const data = await response.json();
-      console.log('Message sent:', data);
       // Clear the message input after sending
       setMessage('');
 
-      const coordinates = data.map((reply: any) => ({
-        lat: reply.location.coordinates[1],
-        lng: reply.location.coordinates[0],
-      }));
+
+      // const coordinates = data.map((reply: any) => ({
+      //   lat: reply.location.coordinates[1],
+      //   lng: reply.location.coordinates[0],
+      // }));
 
 
-      const replyMessages: ReplyMessage[] = data.map((reply: any) => ({
-        id: uuidv4(),
-        description: reply.description,
-        price: reply.price,
-        timestamp: new Date(),
-        replyTo: newMessage.id,
-      }));
-      setMessages((prevMessages) => [...prevMessages, ...replyMessages]);
-      setCoordinates(coordinates);
+      const newReply: ReplyMessage = {
+              id: uuidv4(),
+              message: data.message,
+              timestamp: new Date(),
+              replyTo: newMessage.id,
+        };
+
+      setMessages((prevMessages) => [...prevMessages, newReply]);
+      // setCoordinates(coordinates);
       setMessage('');
 
     } catch (error) {

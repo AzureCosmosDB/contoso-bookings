@@ -1,5 +1,6 @@
 from pymongo import MongoClient, UpdateOne
 import os
+import bson
 
 
 # Connect to MongoDB
@@ -27,10 +28,9 @@ user_location = {
 }
 
 def search_listings(query, amenity):
-   # Create an index on the location field
-   # TODO: Keyword search 
-    command = { "createIndexes": "listings", "indexes": [ { "key": { "location": 1 }, "name": "location" } ] }
-    db.command(command)
+
+    amenities = ["WiFi"]
+    amenities.append(amenity)
 
     # Search for the top 5 closest vectors to the query within a 30 mile radius of user's location
     pipeline = [
@@ -38,10 +38,11 @@ def search_listings(query, amenity):
                     "$search": {
                         "cosmosSearch": {
                             "path": "embeddings",
-                            "query": query,  # Replace with your query
-                            "k": 5,  # Limit to top 5 closest vectors
-                            "filter": {"$and": [
-                                { "amenities": { "$in": ["Dishwasher", "Gym"] }},
+                            "query": query,  
+                            "k": 5,  # Top 5 results
+                            "filter": {
+                                "$and": [
+                                { "amenities": { "$in": amenities} },
                                 #  The query converts the distance to radians by dividing by the approximate equatorial radius of the earth, 3963.2 miles
                                 {"location": {"$geoWithin": 
                                                 {"$centerSphere":[user_location["coordinates"], 30/3963.2 ]}}}
@@ -59,13 +60,17 @@ def search_listings(query, amenity):
                         "location": 1,
                         "description": 1,
                         "price": 1,
-                        "_id": 0  # Exclude the _id field
+                        "name": 1,
+                        "_id": 1  # Exclude the _id field
                     }, 
 
                 }
             ]
-    # Execute the aggregation
+    
+    
+    # # Execute the aggregation
     results = collection.aggregate(pipeline)
     results = list(results)
+
     return results
     
