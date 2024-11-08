@@ -37,11 +37,6 @@ azure_openai_chat: AzureChatOpenAI = AzureChatOpenAI(
 )
 
 
-
-# Test the chat flow
-chat_response = azure_openai_chat.invoke("Tell me a joke")
-print(chat_response.content)
-
 REPHRASE_PROMPT = """\
 Given the following conversation and a follow up question, rephrase the follow up \
 question to be a standalone question.
@@ -96,14 +91,15 @@ MESSAGE_HISTORY = None
 class CustomRetriever(BaseRetriever):
     def _get_relevant_documents(self, query: str, amenity:str, *, run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
         search_results = cosmosdb.search_listings(query, amenity)
-    
+        print(search_results)
         documents = [] # List of Document objects
         for result in search_results:
             document = Document(
-                id={result['_id']},
+                id={str(result['_id'])},
                 page_content=result['name'],
                 metadata=result
             )
+            
             documents.append(document)
         return documents
     
@@ -117,19 +113,12 @@ def send_chat_message(message, amenity):
 
     messages = [{"content": message, "role": "user"}]
 
-    # rephrased_question = rephrase_chain.invoke({"chat_history": messages[:-1], "question": messages[-1]})
-    # print(rephrased_question.content)
-
     # Get the context from the database
     context = document_retriever.invoke(message, amenity=amenity)
     response = context_chain.invoke({"context": context, "input": message})
-    
 
     messages.append({"content": response.content, "role": "assistant"})
     MESSAGE_HISTORY = messages
 
-    # print("Question: ", message)
-    # print("LLM Response: ", response.content)
-    # print(response)
+    return response.content, [doc.metadata for doc in context]
 
-    return response.content

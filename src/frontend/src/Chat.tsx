@@ -60,11 +60,10 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
       // Clear the message input after sending
       setMessage('');
 
-
-      // const coordinates = data.map((reply: any) => ({
-      //   lat: reply.location.coordinates[1],
-      //   lng: reply.location.coordinates[0],
-      // }));
+      const coordinates = data.listings.map((reply: any) => ({
+        lat: reply.location.coordinates[1],
+        lng: reply.location.coordinates[0],
+      }));
 
 
       const newReply: ReplyMessage = {
@@ -75,7 +74,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
         };
 
       setMessages((prevMessages) => [...prevMessages, newReply]);
-      // setCoordinates(coordinates);
+      setCoordinates(coordinates);
       setMessage('');
 
     } catch (error) {

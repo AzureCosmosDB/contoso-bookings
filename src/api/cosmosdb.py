@@ -32,6 +32,7 @@ def search_listings(query, amenity):
     amenities = ["WiFi"]
     amenities.append(amenity)
 
+    # print(amenities)
     # Search for the top 5 closest vectors to the query within a 30 mile radius of user's location
     pipeline = [
                 {
@@ -61,7 +62,7 @@ def search_listings(query, amenity):
                         "description": 1,
                         "price": 1,
                         "name": 1,
-                        "_id": 1  # Exclude the _id field
+                        "_id": { "$toString": "$_id" }
                     }, 
 
                 }
@@ -71,6 +72,7 @@ def search_listings(query, amenity):
     # # Execute the aggregation
     results = collection.aggregate(pipeline)
     results = list(results)
+    # print(results)
 
     return results
     
