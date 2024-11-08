@@ -48,7 +48,8 @@ Standalone Question:"""
 
 CONTEXT_PROMPT = """\
 You are a chatbot, tasked with answering any question about \
-rental listings from the context. You can also answer questions about the particular areas, and provide suggestions for things to do.\
+rental listings from the context. You may only suggest rental options that exist in the context \
+You can also answer questions about the particular areas, and provide suggestions for things to do. \
 You may ask a follow up question about things the user likes to do while on vacation or if there's a particular point of interest.
 
 Generate a response of 150 words or less for the \
@@ -84,7 +85,7 @@ rephrase_chain = rephrase_prompt_template | azure_openai_chat
 # Context Chain
 context_chain = context_prompt_template | azure_openai_chat
 
-MESSAGE_HISTORY = None
+MESSAGE_HISTORY = []
 
 ## Custom Retriever
 
@@ -103,23 +104,18 @@ class CustomRetriever(BaseRetriever):
         return documents
     
 retriever = CustomRetriever()
-
-
 # Use a custom retriever
 document_retriever = retriever
 
-
-
 def send_chat_message(message, amenity, user_location):
 
-    messages = [{"content": message, "role": "user"}]
+    MESSAGE_HISTORY.append([{"content": message, "role": "user"}])
+ 
+    rephrased_question = rephrase_chain.invoke({"chat_history": MESSAGE_HISTORY[:-1], "question": MESSAGE_HISTORY[-1]})
+    context = document_retriever.invoke(str(rephrased_question.content), amenity=amenity, user_location=user_location)
+    response = context_chain.invoke({"context": context, "input": rephrased_question.content})
 
-    # Get the context from the database
-    context = document_retriever.invoke(message, amenity=amenity, user_location=user_location)
-    response = context_chain.invoke({"context": context, "input": message})
-
-    messages.append({"content": response.content, "role": "assistant"})
-    MESSAGE_HISTORY.extend(messages)
+    MESSAGE_HISTORY.append({"content": response.content, "role": "assistant"})
 
     return response.content, [doc.metadata for doc in context]
 
