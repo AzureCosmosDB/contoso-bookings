@@ -13,19 +13,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
   const [amenities, setAmenities] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // useEffect(() => {
-  //   const fetchAmenities = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:8000/amenities');
-  //       const data = await response.json();        
-  //       setAmenities(data.amenities);
-  //     } catch (error) {
-  //       console.error('Error fetching amenities:', error);
-  //     }
-  //   };
-
-  //   fetchAmenities();
-  // }, []);
+  useEffect(() => {}, []);
 
   const handleSendMessage = async () => {
 
@@ -42,7 +30,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
     let amenities_list = amenities.split(',').map((amenity) => amenity.trim());
   
     try {
-      const response = await fetch('http://localhost:8000/query-message', {
+      const response = await fetch('http://localhost:8000/query_message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

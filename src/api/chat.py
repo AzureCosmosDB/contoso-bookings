@@ -89,8 +89,8 @@ MESSAGE_HISTORY = None
 ## Custom Retriever
 
 class CustomRetriever(BaseRetriever):
-    def _get_relevant_documents(self, query: str, amenity:str, *, run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
-        search_results = cosmosdb.search_listings(query, amenity)
+    def _get_relevant_documents(self, query: str, amenity:str, user_location:list, *,  run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
+        search_results = cosmosdb.search_listings(query, amenity, user_location)
         documents = [] # List of Document objects
         for result in search_results:
             document = Document(
@@ -108,16 +108,18 @@ retriever = CustomRetriever()
 # Use a custom retriever
 document_retriever = retriever
 
-def send_chat_message(message, amenity):
+
+
+def send_chat_message(message, amenity, user_location):
 
     messages = [{"content": message, "role": "user"}]
 
     # Get the context from the database
-    context = document_retriever.invoke(message, amenity=amenity)
+    context = document_retriever.invoke(message, amenity=amenity, user_location=user_location)
     response = context_chain.invoke({"context": context, "input": message})
 
     messages.append({"content": response.content, "role": "assistant"})
-    MESSAGE_HISTORY = messages
+    MESSAGE_HISTORY.extend(messages)
 
     return response.content, [doc.metadata for doc in context]
 

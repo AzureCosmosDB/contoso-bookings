@@ -22,12 +22,12 @@ else:
 
 
 # Define the user's location
-user_location = {
-    "type": "Point",
-    "coordinates": [-105.0020980834961, 39.766414642333984]  # User's location (longitude, latitude)
-}
+# user_location = {
+#     "type": "Point",
+#     "coordinates": [-105.0020980834961, 39.766414642333984]  # User's location (longitude, latitude)
+# }
 
-def search_listings(query, amenity):
+def search_listings(query, amenity, user_location):
 
     amenities = ["WiFi"]
     
@@ -50,7 +50,7 @@ def search_listings(query, amenity):
                                 { "amenities": { "$in": amenities} },
                                 #  The query converts the distance to radians by dividing by the approximate equatorial radius of the earth, 3963.2 miles
                                 {"location": {"$geoWithin": 
-                                                {"$centerSphere":[user_location["coordinates"], 30/3963.2 ]}}}
+                                                {"$centerSphere":[user_location, 30/3963.2 ]}}}
                                 ]
                             }
                         }

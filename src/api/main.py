@@ -1,12 +1,10 @@
 from fastapi import Body, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# from datetime import datetime, timedelta
 from fastapi.responses import JSONResponse
-import cosmosdb
+import geolocation as geo
 import chat
 import json
-# from dotenv import dotenv_values
-# config = dotenv_values()
+
 
 app = FastAPI()
 
@@ -18,10 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class UserInfo:
+    coordinates = [-105.0020980834961, 39.766414642333984]  # User's location (longitude, latitude)
+    
+user = UserInfo()
 
-@app.post("/query-message")
+@app.post("/query_message")
 def post_query_message(content: str = Body(..., embed=True), amenities: list = Body(..., embed=True)):
-    response_message, listing_metadata = chat.send_chat_message(content, amenities)
+    response_message, listing_metadata = chat.send_chat_message(content, amenities, user.coordinates)
 
     response_data = {
         "message": response_message,
@@ -29,9 +31,14 @@ def post_query_message(content: str = Body(..., embed=True), amenities: list = B
     }
     return JSONResponse(response_data)
 
-
-
+@app.post("/get_location")
+def post_get_location(city_name: str = Body(..., embed=True)):
+    lat, lon = geo.get_city_coordinates(city_name)
+    response_data = {
+        "latitude": lat,
+        "longitude": lon
+    }
+    user.coordinates = [lon, lat]   
+    return JSONResponse(response_data)
 
     
-
-
