@@ -91,7 +91,6 @@ MESSAGE_HISTORY = None
 class CustomRetriever(BaseRetriever):
     def _get_relevant_documents(self, query: str, amenity:str, *, run_manager: CallbackManagerForRetrieverRun) -> List[Document]:
         search_results = cosmosdb.search_listings(query, amenity)
-        print(search_results)
         documents = [] # List of Document objects
         for result in search_results:
             document = Document(

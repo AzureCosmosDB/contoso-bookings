@@ -3,7 +3,6 @@ import UserMessageComp from './UserMessage';
 import ReplyMessageComp from './ReplyMessage';
 import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
-import { log } from 'console';
 
 interface ChatProps {
   setCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
@@ -11,36 +10,37 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
   const [message, setMessage] = useState('');
-  const [amenities, setAmenities] = useState<string[]>([]);
-  const [selectedAmenity, setSelectedAmenity] = useState<string>('');
+  const [amenities, setAmenities] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  useEffect(() => {
-    const fetchAmenities = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/amenities');
-        const data = await response.json();        
-        setAmenities(data.amenities);
-      } catch (error) {
-        console.error('Error fetching amenities:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAmenities = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:8000/amenities');
+  //       const data = await response.json();        
+  //       setAmenities(data.amenities);
+  //     } catch (error) {
+  //       console.error('Error fetching amenities:', error);
+  //     }
+  //   };
 
-    fetchAmenities();
-  }, []);
+  //   fetchAmenities();
+  // }, []);
 
   const handleSendMessage = async () => {
 
     const newMessage: UserMessage = {
       id: uuidv4(),
       message,
-      amenity: selectedAmenity,
+      amenity: amenities,
       timestamp: new Date(),
     };
 
     setMessages([...messages, newMessage]);
 
 
+    let amenities_list = amenities.split(',').map((amenity) => amenity.trim());
+  
     try {
       const response = await fetch('http://localhost:8000/query-message', {
         method: 'POST',
@@ -48,7 +48,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
           'Content-Type': 'application/json',
         },
         
-        body: JSON.stringify({ content: message, amenity: selectedAmenity }),
+        body: JSON.stringify({ content: message, amenities: amenities_list }),
       });
 
       
@@ -57,8 +57,6 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
       }
 
       const data = await response.json();
-      // Clear the message input after sending
-      setMessage('');
 
       const coordinates = data.listings.map((reply: any) => ({
         lat: reply.location.coordinates[1],
@@ -76,6 +74,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
       setMessages((prevMessages) => [...prevMessages, newReply]);
       setCoordinates(coordinates);
       setMessage('');
+      setAmenities('');
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -102,7 +101,14 @@ return (
         style={{ width: '100%', height: '100px' }}
       />
       <div>
-        <select
+
+        <label htmlFor="amenity">Add Amenities:</label>
+        <textarea value={amenities} 
+         onChange={(e) => setAmenities(e.target.value)}
+         style={{ width: '100%', marginTop: '10px' }}
+        />
+
+        {/* <select
           value={selectedAmenity}
           onChange={(e) => setSelectedAmenity(e.target.value)}
           style={{ width: '100%', marginTop: '10px' }}
@@ -113,7 +119,7 @@ return (
               {amenity}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
       <button onClick={handleSendMessage} style={{ marginTop: '10px' }}>
         Send

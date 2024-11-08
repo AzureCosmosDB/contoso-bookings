@@ -18,15 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/amenities")
-def get_amenities():
-    amenities = ["Pool", "Gym", "WiFi", "Dishwasher"]
-    return {"amenities": amenities}
 
 @app.post("/query-message")
-def post_query_message(content: str = Body(..., embed=True), amenity: str = Body(..., embed=True)):
-    # response = cosmosdb.search_listings(content, amenity)
-    response_message, listing_metadata = chat.send_chat_message(content, amenity)
+def post_query_message(content: str = Body(..., embed=True), amenities: list = Body(..., embed=True)):
+    response_message, listing_metadata = chat.send_chat_message(content, amenities)
 
     response_data = {
         "message": response_message,

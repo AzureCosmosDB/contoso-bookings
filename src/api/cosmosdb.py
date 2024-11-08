@@ -30,7 +30,11 @@ user_location = {
 def search_listings(query, amenity):
 
     amenities = ["WiFi"]
-    amenities.append(amenity)
+    
+    if type(amenity) == list:
+        amenities.extend(amenity)
+    else:
+        amenities.append(amenity)
 
     # print(amenities)
     # Search for the top 5 closest vectors to the query within a 30 mile radius of user's location
