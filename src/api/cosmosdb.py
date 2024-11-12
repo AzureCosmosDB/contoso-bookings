@@ -21,12 +21,6 @@ else:
     print("Using collection: '{}'.\n".format(COLLECTION_NAME))
 
 
-# Define the user's location
-# user_location = {
-#     "type": "Point",
-#     "coordinates": [-105.0020980834961, 39.766414642333984]  # User's location (longitude, latitude)
-# }
-
 def search_listings(query, amenity, user_location):
 
     amenities = ["WiFi"]

@@ -5,10 +5,10 @@ import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ChatProps {
-  setCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
+  setSearchCoordinates: (coordinates: { lat: number; lng: number }) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
+const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
   const [message, setMessage] = useState('');
   const [amenities, setAmenities] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -60,7 +60,7 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
         };
 
       setMessages((prevMessages) => [...prevMessages, newReply]);
-      setCoordinates(coordinates);
+      setSearchCoordinates(coordinates);
       setMessage('');
       setAmenities('');
 

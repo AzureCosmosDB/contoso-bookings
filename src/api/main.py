@@ -33,6 +33,7 @@ def post_query_message(content: str = Body(..., embed=True), amenities: list = B
 
 @app.post("/get_location")
 def post_get_location(city_name: str = Body(..., embed=True)):
+    print(city_name)
     lat, lon = geo.get_city_coordinates(city_name)
     response_data = {
         "latitude": lat,
