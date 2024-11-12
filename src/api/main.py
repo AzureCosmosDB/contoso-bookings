@@ -39,6 +39,7 @@ def post_get_location(city_name: str = Body(..., embed=True)):
         "latitude": lat,
         "longitude": lon
     }
+
     user.coordinates = [lon, lat]   
     return JSONResponse(response_data)
 

@@ -5,7 +5,7 @@ import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ChatProps {
-  setSearchCoordinates: (coordinates: { lat: number; lng: number }) => void;
+  setSearchCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
 }
 
 const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
@@ -95,19 +95,6 @@ return (
          onChange={(e) => setAmenities(e.target.value)}
          style={{ width: '100%', marginTop: '10px' }}
         />
-
-        {/* <select
-          value={selectedAmenity}
-          onChange={(e) => setSelectedAmenity(e.target.value)}
-          style={{ width: '100%', marginTop: '10px' }}
-        >
-          <option value="">Select an amenity</option>
-          {amenities.map((amenity, index) => (
-            <option key={index} value={amenity}>
-              {amenity}
-            </option>
-          ))}
-        </select> */}
       </div>
       <button onClick={handleSendMessage} style={{ marginTop: '10px' }}>
         Send

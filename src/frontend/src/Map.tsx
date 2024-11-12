@@ -34,20 +34,17 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_coordinates }) => {
         // Create a layer to render the data
         map.layers.add(new atlas.layer.BubbleLayer(datasource));
     
-        // // Parse the point string.
-        // let point = spatial.io.ogc.WKT.read("POINT(-105.0020980834961, 39.766414642333984)");
+        // Parse the point string.
+        let point = spatial.io.ogc.WKT.read(`POINT(${user_coordinates.lng}, ${user_coordinates.lat})`);
     
-        // // Add the parsed data to the data source.
-        // datasource.add(point);
+        // Add the parsed data to the data source.
+        datasource.add(point);
 
         if (search_coordinates.length === 0) {
           return;
         }
 
-        search_coordinates.forEach((coord) => {
-
-          console.log('Adding marker:', coord);
-          
+        search_coordinates.forEach((coord) => {          
 
           const marker = new atlas.HtmlMarker({
             color: 'Orange',

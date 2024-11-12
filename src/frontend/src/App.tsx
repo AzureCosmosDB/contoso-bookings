@@ -7,6 +7,7 @@ import './App.css';
 
 const App: React.FC = () => {
   const [coordinates, setUserCoordinates] = useState<{ lat: number; lng: number }>();
+  const [coordinates_collection, setSearchCoordinates] = useState<{ lat: number; lng: number }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleLocationSubmit = async (location: string) => {
@@ -16,10 +17,8 @@ const App: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ location }),
+        body: JSON.stringify({ city_name: location }),
       });
-
-      console.log(location);
       
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -27,8 +26,8 @@ const App: React.FC = () => {
 
       const data = await response.json();
       const newCoordinates = {
-        lat: data.location.coordinates[1],
-        lng: data.location.coordinates[0],
+        lat: data.latitude,
+        lng: data.longitude,
       };
 
       setUserCoordinates(newCoordinates);
@@ -41,9 +40,9 @@ const App: React.FC = () => {
     <div className="App">
       <Map 
         user_coordinates={coordinates || { lat: 0, lng: 0 }} 
-        search_coordinates={[]} 
+        search_coordinates={coordinates_collection || []} 
       />
-      {/* <Chat setUserCoordinates={setUserCoordinates} /> */}
+      <Chat setSearchCoordinates={setSearchCoordinates} />
       <LocationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
