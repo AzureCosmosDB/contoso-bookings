@@ -8,8 +8,10 @@ const ReplyMessage: React.FC<{ replies: ReplyMessageProps[] }> = ({ replies }) =
       {replies.map((reply, index) => (
         <div className="reply-message">
           <div className="reply-message-content">
-            Description: {reply.description} <br />
-            Price: {reply.price}
+            {/* Description: {reply.description} <br />
+            Price: {reply.price} */}
+
+            {reply.message}
           </div>
           <div className="reply-message-timestamp">
             {reply.timestamp.toLocaleString()}

@@ -5,51 +5,38 @@ import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ChatProps {
-  setCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
+  setSearchCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
+const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
   const [message, setMessage] = useState('');
-  const [amenities, setAmenities] = useState<string[]>([]);
-  const [selectedAmenity, setSelectedAmenity] = useState<string>('');
+  const [amenities, setAmenities] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  useEffect(() => {
-    const fetchAmenities = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/amenities');
-        const data = await response.json();
-        console.log('Amenities:', data.amenities);
-        
-        setAmenities(data.amenities);
-      } catch (error) {
-        console.error('Error fetching amenities:', error);
-      }
-    };
-
-    fetchAmenities();
-  }, []);
+  useEffect(() => {}, []);
 
   const handleSendMessage = async () => {
 
     const newMessage: UserMessage = {
       id: uuidv4(),
       message,
-      amenity: selectedAmenity,
+      amenity: amenities,
       timestamp: new Date(),
     };
 
     setMessages([...messages, newMessage]);
 
 
+    let amenities_list = amenities.split(',').map((amenity) => amenity.trim());
+  
     try {
-      const response = await fetch('http://localhost:8000/query-message', {
+      const response = await fetch('http://localhost:8000/query_message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         
-        body: JSON.stringify({ content: message, amenity: selectedAmenity }),
+        body: JSON.stringify({ content: message, amenities: amenities_list }),
       });
 
       
@@ -58,26 +45,24 @@ const Chat: React.FC<ChatProps> = ({ setCoordinates }) => {
       }
 
       const data = await response.json();
-      console.log('Message sent:', data);
-      // Clear the message input after sending
-      setMessage('');
 
-      const coordinates = data.map((reply: any) => ({
+      const coordinates = data.listings.map((reply: any) => ({
         lat: reply.location.coordinates[1],
         lng: reply.location.coordinates[0],
       }));
 
 
-      const replyMessages: ReplyMessage[] = data.map((reply: any) => ({
-        id: uuidv4(),
-        description: reply.description,
-        price: reply.price,
-        timestamp: new Date(),
-        replyTo: newMessage.id,
-      }));
-      setMessages((prevMessages) => [...prevMessages, ...replyMessages]);
-      setCoordinates(coordinates);
+      const newReply: ReplyMessage = {
+              id: uuidv4(),
+              message: data.message,
+              timestamp: new Date(),
+              replyTo: newMessage.id,
+        };
+
+      setMessages((prevMessages) => [...prevMessages, newReply]);
+      setSearchCoordinates(coordinates);
       setMessage('');
+      setAmenities('');
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -104,18 +89,12 @@ return (
         style={{ width: '100%', height: '100px' }}
       />
       <div>
-        <select
-          value={selectedAmenity}
-          onChange={(e) => setSelectedAmenity(e.target.value)}
-          style={{ width: '100%', marginTop: '10px' }}
-        >
-          <option value="">Select an amenity</option>
-          {amenities.map((amenity, index) => (
-            <option key={index} value={amenity}>
-              {amenity}
-            </option>
-          ))}
-        </select>
+
+        <label htmlFor="amenity">Add Amenities:</label>
+        <textarea value={amenities} 
+         onChange={(e) => setAmenities(e.target.value)}
+         style={{ width: '100%', marginTop: '10px' }}
+        />
       </div>
       <button onClick={handleSendMessage} style={{ marginTop: '10px' }}>
         Send

@@ -3,20 +3,20 @@ import * as atlas from 'azure-maps-control';
 import * as spatial from "azure-maps-spatial-io";
 import "azure-maps-control/dist/atlas.min.css";
 
-require('dotenv').config();
 const azureMapsKey = process.env.REACT_APP_CONTOSO_BOOKINGS_AZURE_MAPS_KEY;
 
 interface MapProps {
-  coordinates: { lat: number; lng: number }[];
+  user_coordinates: {lat: number; lng: number};
+  search_coordinates: { lat: number; lng: number }[];
 }
 
-const Map: React.FC<MapProps> = ({ coordinates }) => {
+const Map: React.FC<MapProps> = ({ user_coordinates, search_coordinates }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (mapRef.current) {
       const map = new atlas.Map(mapRef.current, {
-        center: [-105.0020980834961, 39.766414642333984],
+        center:  [user_coordinates.lng, user_coordinates.lat], //[-105.0020980834961, 39.766414642333984],
         zoom: 10,
         view: 'Auto',
         authOptions: {
@@ -27,7 +27,6 @@ const Map: React.FC<MapProps> = ({ coordinates }) => {
 
       map.events.add("ready", () => {
 
-        console.log("Map ready");
         // Create a data source and add it to the map.
         const datasource = new atlas.source.DataSource();
         map.sources.add(datasource);
@@ -36,14 +35,16 @@ const Map: React.FC<MapProps> = ({ coordinates }) => {
         map.layers.add(new atlas.layer.BubbleLayer(datasource));
     
         // Parse the point string.
-        let point = spatial.io.ogc.WKT.read("POINT(-105.0020980834961, 39.766414642333984)");
+        let point = spatial.io.ogc.WKT.read(`POINT(${user_coordinates.lng}, ${user_coordinates.lat})`);
     
         // Add the parsed data to the data source.
         datasource.add(point);
-        coordinates.forEach((coord) => {
 
-          console.log('Adding marker:', coord);
-          
+        if (search_coordinates.length === 0) {
+          return;
+        }
+
+        search_coordinates.forEach((coord) => {          
 
           const marker = new atlas.HtmlMarker({
             color: 'Orange',
@@ -55,7 +56,7 @@ const Map: React.FC<MapProps> = ({ coordinates }) => {
 
       });
     }
-  }, [coordinates]);
+  }, [search_coordinates, user_coordinates]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%' }} />;
 };
