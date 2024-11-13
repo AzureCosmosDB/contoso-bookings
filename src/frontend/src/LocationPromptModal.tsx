@@ -22,13 +22,15 @@ const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose, onSubmit
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Enter Your Location</h2>
+        <h1>Welcome to Contoso Bookings!</h1>
+        {/* <h2>Enter Your Location</h2> */}
         <input
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="Enter your location (City, State)"
         />
+        <br />
         <button onClick={handleSubmit}>Submit</button>
         <button onClick={onClose}>Close</button>
       </div>

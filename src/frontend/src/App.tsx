@@ -37,7 +37,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <FluentProvider theme={teamsLightTheme} className="App">
+    <FluentProvider theme={teamsLightTheme}>
+      <header className='header'>
+        <div className="header-content">
+          <img src="/Azure-Cosmos-DB.svg" alt="Logo" className="header-logo" />
+        <h1>Contoso Bookings</h1>
+        </div>
+      </header>
+      <div className='App'>
       <Map 
         user_coordinates={coordinates || { lat: 0, lng: 0 }} 
         search_map_results={coordinates_collection || []} 
@@ -48,6 +55,7 @@ const App: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleLocationSubmit}
       />
+      </div>
     </FluentProvider>
   );
 };
