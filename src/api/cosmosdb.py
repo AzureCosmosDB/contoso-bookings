@@ -56,7 +56,7 @@ def search_listings(query, amenity, user_location):
                 },
                 {
 
-                 '$project': { "similarity_score": { '$meta': 'searchScore' }, 
+                 '$project': { "similarity_score": { '$round': [{ '$meta': 'searchScore' }, 2] }, 
                                 "location": 1,
                                 "description": 1,
                                 "price": 1,
@@ -65,9 +65,7 @@ def search_listings(query, amenity, user_location):
                             }, 
                 }
             ]
-    
-    
-    # # Execute the aggregation
+        
     results = collection.aggregate(pipeline)
     results = list(results)
     # print(results)

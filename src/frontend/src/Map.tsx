@@ -31,11 +31,7 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_map_results }) => {
         // Create a data source and add it to the map.
         const datasource = new atlas.source.DataSource();
         map.sources.add(datasource);
-    
-        // Create a layer to render the data
         map.layers.add(new atlas.layer.BubbleLayer(datasource));
-    
-        // Parse the point string.
         let point = spatial.io.ogc.WKT.read(`POINT(${user_coordinates.lng}, ${user_coordinates.lat})`);
     
         // Add the parsed data to the data source.
@@ -47,26 +43,27 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_map_results }) => {
 
         search_map_results.forEach((search_result) => {          
 
+          
           const marker = new atlas.HtmlMarker({
-            color: 'Orange',
+            color: 'Red',
             htmlContent: '<div class="pulseIcon"></div>',
-            // text: 'M',
             position: [ search_result.lng, search_result.lat ],
+            popup: new atlas.Popup({
+              content: `<div class="marker-popup">
+                          <h3>${search_result.name}</h3>
+                          <p>Price: ${search_result.price} per day</p>
+                          <p>Similarity Score: ${search_result.similarity_score}</p>
+                        </div>`,
+              pixelOffset: [0, -20],
+            }),
           });
 
-          //  marker.events.add('click', () => {
-          //   const popup = new atlas.Popup({
-          //     content: `<div>
-          //                 <h3>${search_result.name}</h3>
-          //                 <p>Price: ${search_result.price}</p>
-          //                 <p>Similarity Score: ${search_result.similarity_score}</p>
-          //               </div>`,
-          //     position: marker.getOptions().position,
-          //   });
-          //   popup.open(map);
-          // });
-
           map.markers.add(marker);
+
+          map.events.add('click',marker, () => {
+            marker.togglePopup();
+          });
+
         });
 
       });

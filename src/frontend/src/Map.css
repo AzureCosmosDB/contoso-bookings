@@ -27,3 +27,7 @@
         box-shadow: 0 0 0 0 rgba(0, 204, 255, 0);
     }
 }
+
+.marker-popup{
+    padding: 10px;
+}
