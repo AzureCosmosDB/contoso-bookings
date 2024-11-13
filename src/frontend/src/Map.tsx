@@ -2,21 +2,22 @@ import React, { useEffect, useRef } from 'react';
 import * as atlas from 'azure-maps-control';
 import * as spatial from "azure-maps-spatial-io";
 import "azure-maps-control/dist/atlas.min.css";
+import './Map.css';
 
 const azureMapsKey = process.env.REACT_APP_CONTOSO_BOOKINGS_AZURE_MAPS_KEY;
 
 interface MapProps {
   user_coordinates: {lat: number; lng: number};
-  search_coordinates: { lat: number; lng: number }[];
+  search_map_results: { name: String, price:number, similarity_score:number, lat: number; lng: number }[];
 }
 
-const Map: React.FC<MapProps> = ({ user_coordinates, search_coordinates }) => {
+const Map: React.FC<MapProps> = ({ user_coordinates, search_map_results }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (mapRef.current) {
       const map = new atlas.Map(mapRef.current, {
-        center:  [user_coordinates.lng, user_coordinates.lat], //[-105.0020980834961, 39.766414642333984],
+        center:  [user_coordinates.lng, user_coordinates.lat],
         zoom: 10,
         view: 'Auto',
         authOptions: {
@@ -40,23 +41,25 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_coordinates }) => {
         // Add the parsed data to the data source.
         datasource.add(point);
 
-        if (search_coordinates.length === 0) {
+        if (search_map_results.length === 0) {
           return;
         }
 
-        search_coordinates.forEach((coord) => {          
+        search_map_results.forEach((search_result) => {          
 
           const marker = new atlas.HtmlMarker({
             color: 'Orange',
-            text: 'M',
-            position: [ coord.lng, coord.lat ],
+            htmlContent: '<div class="pulseIcon"></div>',
+            // text: 'M',
+            position: [ search_result.lng, search_result.lat ],
           });
+
           map.markers.add(marker);
         });
 
       });
     }
-  }, [search_coordinates, user_coordinates]);
+  }, [search_map_results, user_coordinates]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%' }} />;
 };

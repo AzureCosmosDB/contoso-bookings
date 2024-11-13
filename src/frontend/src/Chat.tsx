@@ -3,12 +3,22 @@ import UserMessageComp from './UserMessage';
 import ReplyMessageComp from './ReplyMessage';
 import { ChatMessage, UserMessage, ReplyMessage } from './ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
+import { provideFluentDesignSystem, fluentTextArea, fluentButton } from '@fluentui/web-components';
+import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
+import './Chat.css';
+
+const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
+export const FluentButton = wrap(fluentButton());
+export const FluentTextArea = wrap(fluentTextArea(), {
+  events: {
+  },
+});
 
 interface ChatProps {
-  setSearchCoordinates: (coordinates: { lat: number; lng: number }[]) => void;
+  setSearchResults: (search_results: { name: String, price:number, similarity_score:number, lat: number; lng: number }[]) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
+const Chat: React.FC<ChatProps> = ({ setSearchResults }) => {
   const [message, setMessage] = useState('');
   const [amenities, setAmenities] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -16,6 +26,12 @@ const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
   useEffect(() => {}, []);
 
   const handleSendMessage = async () => {
+
+    if (!message.trim()) {
+      alert('Message is required');
+      return;
+    }
+
 
     const newMessage: UserMessage = {
       id: uuidv4(),
@@ -46,10 +62,6 @@ const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
 
       const data = await response.json();
 
-      const coordinates = data.listings.map((reply: any) => ({
-        lat: reply.location.coordinates[1],
-        lng: reply.location.coordinates[0],
-      }));
 
 
       const newReply: ReplyMessage = {
@@ -60,9 +72,22 @@ const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
         };
 
       setMessages((prevMessages) => [...prevMessages, newReply]);
-      setSearchCoordinates(coordinates);
       setMessage('');
       setAmenities('');
+
+      if (!data.listings) {
+        return;
+      }
+      const search_results = data.listings.map((reply: any) => ({
+        lat: reply.location.coordinates[1],
+        lng: reply.location.coordinates[0],
+        name: reply.name,
+        price: reply.price,
+        similarity_score: reply.similarity_score
+      }));
+
+      setSearchResults(search_results);
+
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -70,9 +95,9 @@ const Chat: React.FC<ChatProps> = ({ setSearchCoordinates }) => {
   };
 
 return (
-  <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-    <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
-      <h2>Chat</h2>
+  <div className='chat-container'>
+    <div className='chat-messages'>
+      <h2>Chat</h2> 
       {messages.map((msg) =>
           'amenity' in msg ? (
             <UserMessageComp message={msg as UserMessage}/>
@@ -81,24 +106,28 @@ return (
           )
         )}
     </div>
-    <div style={{ padding: '10px', borderTop: '1px solid #ccc' }}>
-      <textarea
+    <div>
+      <FluentTextArea className='chat-input'
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
         placeholder="Type your message here..."
-        style={{ width: '100%', height: '100px' }}
+        required
       />
       <div>
-
-        <label htmlFor="amenity">Add Amenities:</label>
-        <textarea value={amenities} 
-         onChange={(e) => setAmenities(e.target.value)}
+        <label htmlFor="amenity">Add Amenities: </label>
+        <FluentTextArea value={amenities} 
+         onChange={(e) => setAmenities((e.target as HTMLTextAreaElement).value)}
          style={{ width: '100%', marginTop: '10px' }}
         />
       </div>
-      <button onClick={handleSendMessage} style={{ marginTop: '10px' }}>
-        Send
-      </button>
+      <div className='send-button-container'>
+      
+      <FluentButton 
+      onClick={handleSendMessage} 
+      className='send-button' >
+        Send Message
+      </FluentButton>
+      </div>
     </div>
   </div>
 );

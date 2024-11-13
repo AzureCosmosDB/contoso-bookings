@@ -1,16 +1,20 @@
 import React from 'react';
-import './ReplyMessage.css';
+import { provideFluentDesignSystem, fluentCard } from '@fluentui/web-components';
+import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import type { ReplyMessage as ReplyMessageProps } from './ChatMessage';
+import './ReplyMessage.css';
+
+
+
+const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
+export const FluentCard = wrap(fluentCard());
 
 const ReplyMessage: React.FC<{ replies: ReplyMessageProps[] }> = ({ replies }) => {
   return (
-    <div className="reply-messages">
-      {replies.map((reply, index) => (
+    <FluentCard className="reply-message">
+      {replies.map((reply) => (
         <div className="reply-message">
           <div className="reply-message-content">
-            {/* Description: {reply.description} <br />
-            Price: {reply.price} */}
-
             {reply.message}
           </div>
           <div className="reply-message-timestamp">
@@ -18,7 +22,7 @@ const ReplyMessage: React.FC<{ replies: ReplyMessageProps[] }> = ({ replies }) =
           </div>
         </div>
       ))}
-    </div>
+    </FluentCard>
   );
 };
 
