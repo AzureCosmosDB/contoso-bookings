@@ -55,14 +55,14 @@ def search_listings(query, amenity, user_location):
                     "$limit": 5  # Limit to top 5 results
                 },
                 {
-                    '$project': {
-                        "location": 1,
-                        "description": 1,
-                        "price": 1,
-                        "name": 1,
-                        "_id": { "$toString": "$_id" }
-                    }, 
 
+                 '$project': { "similarity_score": { '$meta': 'searchScore' }, 
+                                "location": 1,
+                                "description": 1,
+                                "price": 1,
+                                "name": 1,
+                                "_id": { "$toString": "$_id" } 
+                            }, 
                 }
             ]
     

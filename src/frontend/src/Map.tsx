@@ -54,6 +54,18 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_map_results }) => {
             position: [ search_result.lng, search_result.lat ],
           });
 
+          //  marker.events.add('click', () => {
+          //   const popup = new atlas.Popup({
+          //     content: `<div>
+          //                 <h3>${search_result.name}</h3>
+          //                 <p>Price: ${search_result.price}</p>
+          //                 <p>Similarity Score: ${search_result.similarity_score}</p>
+          //               </div>`,
+          //     position: marker.getOptions().position,
+          //   });
+          //   popup.open(map);
+          // });
+
           map.markers.add(marker);
         });
 
