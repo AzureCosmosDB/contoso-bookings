@@ -3,13 +3,7 @@ import Chat from './Chat';
 import Map from './Map';
 import LocationModal from './LocationPromptModal';
 import './App.css';
-
-import { provideFluentDesignSystem, fluentCard, fluentButton } from '@fluentui/web-components';
-import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
-const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
-
-export const FluentCard = wrap(fluentCard());
-export const FluentButton = wrap(fluentButton());
+import { FluentProvider, teamsLightTheme } from '@fluentui/react-components';
 
 const App: React.FC = () => {
   const [coordinates, setUserCoordinates] = useState<{ lat: number; lng: number }>();
@@ -43,7 +37,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="App">
+    <FluentProvider theme={teamsLightTheme} className="App">
       <Map 
         user_coordinates={coordinates || { lat: 0, lng: 0 }} 
         search_map_results={coordinates_collection || []} 
@@ -54,7 +48,7 @@ const App: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleLocationSubmit}
       />
-    </div>
+    </FluentProvider>
   );
 };
 
