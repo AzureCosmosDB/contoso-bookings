@@ -3,7 +3,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: orange;
+    background: rgb(255, 0, 0);
     border: 2px solid white;
     cursor: pointer;
     box-shadow: 0 0 0 rgba(0, 204, 255, 0.4);

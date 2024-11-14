@@ -94,8 +94,9 @@ const Chat: React.FC<ChatProps> = ({ setSearchResults }) => {
 
 return (
   <div className='chat-container'>
+    <h2>Chat</h2> 
     <div className='chat-messages'>
-      <h2>Chat</h2> 
+      
       {messages.map((msg) =>
           'amenity' in msg ? (
             <UserMessageComp message={msg as UserMessage}/>
@@ -111,7 +112,7 @@ return (
         placeholder="Type your message here..."
         required
       />
-      <div>
+      <div className='amenity-input'>
         <label htmlFor="amenity">Add Amenities: </label>
         <Textarea value={amenities} 
          onChange={(e) => setAmenities(e.target.value)}

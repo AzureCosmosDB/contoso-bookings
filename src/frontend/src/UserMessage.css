@@ -1,7 +1,8 @@
 .user-message {
  --card-width:100%;
  --card-height:auto;
- padding: 22px;
+ margin: 10px 0px 10px 0px;
+ padding: 10px;
  background-color: rgb(128, 189, 249);
  border: 1px solid rgb(128, 189, 249);
 }

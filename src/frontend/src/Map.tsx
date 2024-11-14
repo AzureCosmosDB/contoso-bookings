@@ -45,7 +45,6 @@ const Map: React.FC<MapProps> = ({ user_coordinates, search_map_results }) => {
 
           
           const marker = new atlas.HtmlMarker({
-            color: 'Red',
             htmlContent: '<div class="pulseIcon"></div>',
             position: [ search_result.lng, search_result.lat ],
             popup: new atlas.Popup({
