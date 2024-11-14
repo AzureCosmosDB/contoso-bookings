@@ -73,9 +73,7 @@ const Chat: React.FC<ChatProps> = ({ setSearchResults }) => {
       setMessage('');
       setAmenities('');
 
-      if (!data.listings) {
-        return;
-      }
+      if (data.listings && data.listings.length > 0) {
       const search_results = data.listings.map((reply: any) => ({
         lat: reply.location.coordinates[1],
         lng: reply.location.coordinates[0],
@@ -85,7 +83,7 @@ const Chat: React.FC<ChatProps> = ({ setSearchResults }) => {
       }));
 
       setSearchResults(search_results);
-
+    }
 
     } catch (error) {
       console.error('Error sending message:', error);

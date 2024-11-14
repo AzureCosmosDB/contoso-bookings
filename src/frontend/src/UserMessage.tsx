@@ -13,7 +13,7 @@ const UserMessage: React.FC<{ message: UserMessageProps }> = ({ message }) => {
     <FluentCard className="user-message">
       <div className="user-message-content">
       {message.message} <br />
-      Chosen Amenities: {message.amenity} 
+      {message.amenity && `Chosen Amenities: ${message.amenity}`}
       </div>
       <div className="user-message-timestamp">
         {message.timestamp.toLocaleString()}

@@ -61,6 +61,16 @@ def search_listings(query, amenity, user_location):
                                 "description": 1,
                                 "price": 1,
                                 "name": 1,
+                                "amenities": 1,
+                                "description": 1,
+                                "neighborhood_overview": 1,
+                                "beds" : 1,
+                                "bedrooms" : 1,
+                                "bathrooms" : 1,
+                                "bathrooms_text" : 1,
+                                "property_type" : 1,
+                                "room_type" : 1,
+                                "host_about" : 1,
                                 "_id": { "$toString": "$_id" } 
                             }, 
                 }

@@ -55,7 +55,10 @@ You may ask a follow up question about things the user likes to do while on vaca
 Generate a response of 150 words or less for the \
 given question based solely on the provided search results. \
 You must only use information from the provided search results. Use an unbiased and \
-fun tone. Do not repeat text. Your response must be solely based on the provided context.
+fun tone. Do not repeat text. Do not suggest areas that don't exist in the context's locations. \
+For example, if the context is about a rental listings with great hiking spots in Portland, Oregon, \
+don't suggest rental listings based in Burlington, Vermont \
+Your response must be solely based on the provided context. \
 
 If there is nothing in the context is relevant to the question at hand, just say \
 "I'm not sure." Don't try to make up an answer.
